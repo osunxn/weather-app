@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const currentTime = new Date().toLocaleTimeString('en-US', {timeZone: timezone});
                 todayWeatherInfo.querySelector('.current-time').textContent = `Current Time: ${currentTime}`;
 
+		setBackground(data.current.condition.text);
+
                 // Function to calculate the hour offset for the forecast
                 function calculateHourOffset(currentHour) {
                     const offset = (currentHour + 1) % 24; // Ensure it wraps around the 24-hour clock
