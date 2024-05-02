@@ -19,16 +19,14 @@ Tagline: Your Weather, Now.
 ### Technologies
 #### Languages & Frameworks:
 - HTML5, CSS3, JavaScript
-- Node.js, Express.js
-- React.js
 
 #### APIs & Libraries:
 - WeatherAPI.com for weather data
 - Material-UI for UI components
-- Chart.js for data visualization
+- No Chart.js, Just cards for data visualization
 
 #### Database:
-- MongoDB
+- Json
 
 #### Other Tools & Resources:
 - Git for version control
