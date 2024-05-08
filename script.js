@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function handleGetWeather(city) {
         const apiKey = '9d25421f1b894a7abb8225858240204'; // Replace with your WeatherAPI.com API key
-        const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=1&aqi=no&alerts=no`;
+        const url = ;
 
         fetch(url)
             .then(response => response.json())
