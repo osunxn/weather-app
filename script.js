@@ -3,6 +3,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const celsiusToggle = document.getElementById('celsius');
     const fahrenheitToggle = document.getElementById('fahrenheit');
     let isCelsius = true; // Flag to track the current temperature unit
+    let city = "null";
+
+    // inatialize the fuction to set the landingPage to the info to user location
+    getUserLocation();
 
     // Function to toggle between Celsius and Fahrenheit
     function toggleTemperatureUnit() {
@@ -24,9 +28,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    function handleGetWeather() {
-        const city = document.getElementById('city').value;
-        const apiKey = 'your api key'; // Replace with your WeatherAPI.com API key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            city = document.getElementById('city').value;
+            handleGetWeather(city);
+        }
+    });
+
+    function getUserLocation() {
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                city = data.city;
+                const country = data.country_name;
+                const latitude = data.latitude;
+                const longitude = data.longitude;
+                
+                console.log('City:', city);
+                console.log('Country:', country);
+                console.log('Latitude:', latitude);
+                console.log('Longitude:', longitude);
+    
+                // Call handleGetWeather with the location name
+                handleGetWeather(city);
+            })
+            .catch(error => {
+                console.error('Error fetching location data:', error);
+            });
+    } 
+
+    function handleGetWeather(city) {
+        const apiKey = '9d25421f1b894a7abb8225858240204'; // Replace with your WeatherAPI.com API key
         const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=1&aqi=no&alerts=no`;
 
         fetch(url)
@@ -44,20 +76,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 todayWeatherInfo.querySelector('.location-name').textContent = data.location.name + ',';
                 todayWeatherInfo.querySelector('.location-region');
                 // Assuming data is your object containing location information
-                if (data.location.region && countOccurrence(data.location.name, data.location.region) <= 0) {
+                if (data.location.region && countOccurrence(data.location.region, data.location.name) <= 0) {
                     todayWeatherInfo.querySelector('.location-region').textContent = data.location.region + ',';
                 } else {
                     todayWeatherInfo.querySelector('.location-region').hidden = true;
-                }          
+                    console.log('Region name',data.location.region, 'same as location name hidden!');
+                }      
                 todayWeatherInfo.querySelector('.location-country').textContent = data.location.country;
                 todayWeatherInfo.querySelector('.date').textContent = todayDate;
+
 
                 // Display current time based on the location timezone
                 const timezone = data.location.tz_id;
                 const currentTime = new Date().toLocaleTimeString('en-US', {timeZone: timezone});
                 todayWeatherInfo.querySelector('.current-time').textContent = `Current Time: ${currentTime}`;
 
-		setBackground(data.current.condition.text);
+                setBackground(data.current.condition.text);
 
                 // Function to calculate the hour offset for the forecast
                 function calculateHourOffset(currentHour) {
@@ -66,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Update forecast information for the next 7 hours starting from the hour immediately following the current time
-                const forecastContainer = document.querySelector('.nownext7hoursinfo');
+                const forecastContainer = document.querySelector('.nownext12hoursinfo');
                 forecastContainer.innerHTML = ''; // Clear existing forecast data
 
                 // Add the current hour data (Now)
@@ -94,9 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     forecastContainer.appendChild(currentHourElement);
                 }
 
-                // Add forecast for the next 7 hours
+                // Add forecast for the next 12 hours
                 const currentTimeEpoch = data.location.localtime_epoch; // Local time provided by the API
-                for (let i = 1; i <= 6; i++) {
+                for (let i = 1; i <= 12; i++) {
                     const nextHourEpoch = currentTimeEpoch + i * 3600; // Increment by 3600 seconds (1 hour)
 
                     const nextHourTime = new Date(nextHourEpoch * 1000).toLocaleTimeString('en-US', {timeZone: timezone});
@@ -125,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Update weather every 7 hours
+    // Update weather every 12 hours
     setInterval(() => {
         getWeatherButton.click();
-    }, 1000 * 60 * 60 * 7); // 7 hours in milliseconds
+    }, 1000 * 60 * 60 * 12); // 12 hours in milliseconds
 });
